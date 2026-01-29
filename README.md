@@ -46,7 +46,7 @@ At the top of the script, edit the `CONFIG` object to match your preferences:
 
 ```javascript
 const CONFIG = {
-  CALENDAR_ID: 'your.email@example.com', // <--- PUT YOUR EMAIL HERE
+  CALENDAR_ID: 'your.email@example.com', // <--- PUT YOUR GOOGLE EMAIL HERE
   EVENT_TITLE: "Focus time",             // Name of the event on your calendar
   DAILY_GOAL_HOURS: 5,                   // How many hours of focus time do you want per day?
   MIN_CHUNK_MINUTES: 60,                 // Minimum size of a focus block (e.g. 1 hour)
