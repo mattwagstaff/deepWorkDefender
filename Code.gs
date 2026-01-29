@@ -2,7 +2,7 @@
  * Configuration
  */
 const CONFIG = {
-  CALENDAR_ID: '<<yourgoogleaccount@gmail/domain.com>>', 
+  CALENDAR_ID: 'your.email@example.com', 
   EVENT_TITLE: "Focus time",
   DAILY_GOAL_HOURS: 5,
   MIN_CHUNK_MINUTES: 60, 
