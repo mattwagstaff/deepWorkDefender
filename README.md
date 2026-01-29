@@ -18,7 +18,7 @@ Unlike basic blockers, this script is math-aware: it calculates how much Focus T
 1.  Go to [script.google.com](https://script.google.com/).
 2.  Click **"New Project"**.
 3.  Name the project (e.g., `Focus-Time-Booker`).
-4.  Copy the code from `Code.js` in this repository and paste it into the script editor (replace any default code).
+4.  Copy the code from `Code.gs` in this repository and paste it into the script editor (replace any default code).
 
 ### 2. Enable Advanced Calendar API (Required)
 *This allows the script to create the special "Focus Time" events with the purple color.*
