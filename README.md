@@ -1,6 +1,6 @@
 # 🛡️ Deep Work Defender
 
-A Google Apps Script that automatically scans your calendar, calculates your remaining free time, and backfills **Focus Time** blocks to defend your calendar from back-to-back overload and actually get some work done!
+A Google Apps Script that automatically scans your Google calendar, calculates your remaining free time, and backfills **Focus Time** blocks to defend your calendar from back-to-back overload and actually get some work done!
 
 Unlike basic time-blockers, this script is math-aware: it calculates how much Focus Time you *already* have for a specific day and only books the difference needed to reach your daily quota (e.g., 5 hours).
 
