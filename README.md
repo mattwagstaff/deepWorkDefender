@@ -18,7 +18,7 @@ Unlike basic time-blockers, this script is math-aware: it calculates how much Fo
 1.  Go to [script.google.com](https://script.google.com/).
 2.  Click **"New Project"**.
 3.  Name the project (e.g., `Deep-Work-Defender`).
-4.  Copy the code from `Code.js` in this repository and paste it into the script editor (replacing any default code).
+4.  Copy the code from `Code.gs` in this repository and paste it into the script editor (replacing any default code).
 
 ### 2. Enable Advanced Calendar API (Required)
 *This allows the script to create the special "Focus Time" events with the purple color.*
