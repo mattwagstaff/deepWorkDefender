@@ -1,8 +1,8 @@
-# Deep Work Defender
+# 🛡️ Deep Work Defender
 
-An intelligent Google Apps Script that acts as your personal scheduling assistant for Google Calendar. It automatically scans your calendar for the upcoming 2 weeks, performs a "gap analysis" of your existing schedule, and books dedicated **Focus Time** blocks to defend your calendar from back-to-back chaos and actually get some work done!
+A Google Apps Script that automatically scans your calendar, calculates your remaining free time, and backfills **Focus Time** blocks to defend your calendar from back-to-back overload and actually get some work done!
 
-Unlike basic blockers, this script is math-aware: it calculates how much Focus Time you *already* have for a specific day and only books the difference needed to reach your daily quota (e.g., 5 hours).
+Unlike basic time-blockers, this script is math-aware: it calculates how much Focus Time you *already* have for a specific day and only books the difference needed to reach your daily quota (e.g., 5 hours).
 
 ## ✨ Features
 
@@ -17,8 +17,8 @@ Unlike basic blockers, this script is math-aware: it calculates how much Focus T
 ### 1. Create the Script
 1.  Go to [script.google.com](https://script.google.com/).
 2.  Click **"New Project"**.
-3.  Name the project (e.g., `Focus-Time-Booker`).
-4.  Copy the code from `Code.gs` in this repository and paste it into the script editor (replace any default code).
+3.  Name the project (e.g., `Deep-Work-Defender`).
+4.  Copy the code from `Code.js` in this repository and paste it into the script editor (replacing any default code).
 
 ### 2. Enable Advanced Calendar API (Required)
 *This allows the script to create the special "Focus Time" events with the purple color.*
@@ -42,11 +42,11 @@ Unlike basic blockers, this script is math-aware: it calculates how much Focus T
 
 ## ⚙️ Configuration
 
-At the top of the script, edit the `CONFIG` object to match your preferences:
+At the top of the script (`Code.gs`), edit the `CONFIG` object to match your preferences:
 
 ```javascript
 const CONFIG = {
-  CALENDAR_ID: 'your.email@example.com', // <--- PUT YOUR GOOGLE EMAIL HERE
+  CALENDAR_ID: 'your.email@example.com', // <--- PUT YOUR EMAIL HERE
   EVENT_TITLE: "Focus time",             // Name of the event on your calendar
   DAILY_GOAL_HOURS: 5,                   // How many hours of focus time do you want per day?
   MIN_CHUNK_MINUTES: 60,                 // Minimum size of a focus block (e.g. 1 hour)
@@ -57,3 +57,28 @@ const CONFIG = {
   WORK_END_MIN: 0,
   COLOR_ID: '3'                          // See "Color Reference" below
 };
+```
+
+# Color Reference
+
+Change COLOR_ID to pick your event color:
+
+- 1: Lavender
+- 2: Sage
+- 3: Grape (Purple) - Default
+- 4: Flamingo
+- 5: Banana
+- 11: Tomato (Red)
+
+## 🤖 Automation (How to run it automatically)
+
+To have this run every morning:
+
+1. In the Apps Script sidebar, click on Triggers (Clock icon ⏰).
+2. Click + Add Trigger (bottom right).
+3. Configure the settings:
+  - Function to run: bookFocusTime
+  - Event source: Time-driven
+  - Type of time based trigger: Day timer
+  - Time of day: 6am to 7am (or before your workday starts).
+4. Click Save.
