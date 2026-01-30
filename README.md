@@ -85,3 +85,9 @@ To have this run every morning:
   - Type of time based trigger: Day timer
   - Time of day: 6am to 7am (or before your workday starts).
 4. Click Save.
+
+
+
+If you find this useful and are able - consider a donation to say thanks!
+
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/H2H31T8UZ7)
