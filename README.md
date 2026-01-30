@@ -1,3 +1,5 @@
+<img width="512" height="279" alt="IMG_5741" src="https://github.com/user-attachments/assets/1321790a-f1fc-4e10-9639-8eb84c3f12b0" />
+
 # 🛡️ Deep Work Defender
 
 A Google Apps Script that automatically scans your Google Calendar, calculates your remaining free time, and backfills **Focus Time** blocks to defend your calendar from back-to-back chaos and actually get some work done!
