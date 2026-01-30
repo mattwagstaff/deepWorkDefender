@@ -29,7 +29,7 @@ Unlike basic time-blockers, this script is math-aware: it calculates how much Fo
 3.  Click **Add**.
 
 ### 3. Set the Timezone (Critical)
-*If you skip this, the script might run on US time and miss your working hours.*
+*If you skip this, the script might run on another timezone and miss your working hours.*
 
 1.  Click the **Project Settings** (Gear icon ⚙️) in the sidebar.
 2.  Check the box **"Show 'appsscript.json' manifest file in editor"**.
