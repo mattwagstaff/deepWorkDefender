@@ -60,7 +60,7 @@ const CONFIG = {
 };
 ```
 
-# Color Reference
+### Color Reference
 
 Change COLOR_ID to pick your event color:
 
