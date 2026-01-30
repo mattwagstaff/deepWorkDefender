@@ -1,13 +1,14 @@
 # 🛡️ Deep Work Defender
 
-A Google Apps Script that automatically scans your Google calendar, calculates your remaining free time, and backfills **Focus Time** blocks to defend your calendar from back-to-back overload and actually get some work done!
+A Google Apps Script that automatically scans your calendar, calculates your remaining free time, and backfills **Focus Time** blocks to defend your calendar from back-to-back chaos and actually get some work done!
 
 Unlike basic time-blockers, this script is math-aware: it calculates how much Focus Time you *already* have for a specific day and only books the difference needed to reach your daily quota (e.g., 5 hours).
 
 ## ✨ Features
 
 * **Gap Analysis:** Counts existing focus time and only books what is missing to reach your daily cap.
-* **Conflict Aware:** Respects your working hours and existing meetings. It treats "Invited" and "Maybe" events as busy, but ignores "Declined" events.
+* **Smart Filtering:** Ignores events marked as "Free" (transparent) or "Declined". This ensures Focus Time is booked immediately after your busy meetings, without leaving awkward 15-minute gaps caused by reminders or placeholders.
+* **Conflict Aware:** Respects your working hours and existing meetings. It treats "Invited" and "Maybe" events as busy.
 * **Native Focus Mode:** Creates official Google Calendar "Focus Time" events (includes the 🎧 icon and "Do Not Disturb" status).
 * **Rolling Window:** Designed to run automatically (e.g., every morning) to backfill slots that open up due to cancellations.
 * **Timezone Safe:** Works correctly across different global timezones.
@@ -21,9 +22,9 @@ Unlike basic time-blockers, this script is math-aware: it calculates how much Fo
 4.  Copy the code from `Code.gs` in this repository and paste it into the script editor (replacing any default code).
 
 ### 2. Enable Advanced Calendar API (Required)
-*This allows the script to create the special "Focus Time" events with the purple color.*
+*This allows the script to read "Free/Busy" status accurately and create special "Focus Time" events.*
 
-1.  In the left sidebar, click the **+** button next to **Services**.
+1.  In the left sidebar of the script editor, click the **+** button next to **Services**.
 2.  Select **Google Calendar API** from the list.
 3.  Click **Add**.
 
