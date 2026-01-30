@@ -1,9 +1,10 @@
 /**
  * Deep Work Defender
+ * Verbose Logging Version
  */
 
 const CONFIG = {
-  CALENDAR_ID: 'your.email@example.com', 
+  CALENDAR_ID: 'your.email@example.com', // <--- UPDATE THIS
   EVENT_TITLE: "Focus time",
   DAILY_GOAL_HOURS: 5,
   MIN_CHUNK_MINUTES: 60, 
@@ -18,18 +19,17 @@ const CONFIG = {
 function bookFocusTime() {
   console.log("--- SCRIPT STARTED ---");
   
-  // 1. Setup Timezone and Dates
-  // We use the calendar to determine the timezone, but we will use the Advanced API to fetch events
   let calendar;
   try {
     calendar = CalendarApp.getCalendarById(CONFIG.CALENDAR_ID);
     if (!calendar) throw new Error("Calendar not found");
   } catch (e) {
-    console.error(`ERROR: Could not access calendar. Ensure Advanced Calendar Service is enabled. ${e.message}`);
+    console.error(`ERROR: Could not access calendar. ${e.message}`);
     return;
   }
 
   const timeZone = calendar.getTimeZone();
+  console.log(`Timezone: ${timeZone}`);
   const now = new Date();
 
   // Loop through days
@@ -37,11 +37,16 @@ function bookFocusTime() {
     let checkDate = new Date();
     checkDate.setDate(now.getDate() + i);
     
+    const dateLog = `[Day ${i} - ${Utilities.formatDate(checkDate, timeZone, 'dd/MM')}]`;
+
     // Skip Weekends
     const dayOfWeek = checkDate.getDay();
-    if (dayOfWeek === 0 || dayOfWeek === 6) continue;
+    if (dayOfWeek === 0 || dayOfWeek === 6) {
+      console.log(`${dateLog} Skipped (Weekend)`);
+      continue;
+    }
 
-    // 2. Construct Start/End times (Timezone Safe)
+    // Construct Start/End times
     const startStr = Utilities.formatDate(checkDate, timeZone, `yyyy-MM-dd'T'${pad(CONFIG.WORK_START_HOUR)}:${pad(CONFIG.WORK_START_MIN)}:00`);
     const endStr   = Utilities.formatDate(checkDate, timeZone, `yyyy-MM-dd'T'${pad(CONFIG.WORK_END_HOUR)}:${pad(CONFIG.WORK_END_MIN)}:00`);
     
@@ -49,10 +54,12 @@ function bookFocusTime() {
     const workEnd = new Date(endStr);
     
     // If workEnd is in the past, skip
-    if (new Date() > workEnd) continue;
+    if (new Date() > workEnd) {
+      console.log(`${dateLog} Skipped (Day ended)`);
+      continue;
+    }
 
-    // 3. FETCH EVENTS via ADVANCED API
-    // We use Calendar.Events.list to see the 'transparency' property
+    // FETCH EVENTS
     let eventsItems = [];
     try {
       const response = Calendar.Events.list(CONFIG.CALENDAR_ID, {
@@ -63,38 +70,30 @@ function bookFocusTime() {
       });
       eventsItems = response.items || [];
     } catch (e) {
-      console.error(`Error fetching events for ${startStr}: ${e.message}`);
+      console.error(`${dateLog} Error fetching events: ${e.message}`);
       continue;
     }
 
     let validEvents = [];
     let existingFocusMillis = 0;
     
-    // 4. Filter Events
+    // Filter Events
     eventsItems.forEach(item => {
-      // --- FILTER 1: IGNORE "FREE" (TRANSPARENT) EVENTS ---
-      // This solves your 15-min gap issue.
-      if (item.transparency === 'transparent') {
-        return; 
-      }
+      // Ignore Transparent (Free) Events
+      if (item.transparency === 'transparent') return; 
 
-      // --- FILTER 2: IGNORE DECLINED EVENTS ---
+      // Ignore Declined Events
       if (item.attendees) {
         const self = item.attendees.find(a => a.self === true);
-        if (self && self.responseStatus === 'declined') {
-          return;
-        }
+        if (self && self.responseStatus === 'declined') return;
       }
 
-      // Convert API DateTime strings to Date Objects
-      // (item.start.date is for All Day events, dateTime is for timed)
       const eStartRaw = item.start.dateTime || item.start.date;
       const eEndRaw = item.end.dateTime || item.end.date;
-      
       const eStartObj = new Date(eStartRaw);
       const eEndObj = new Date(eEndRaw);
 
-      // Check Existing Quota
+      // Check Existing Focus Time
       if (item.summary === CONFIG.EVENT_TITLE) {
         let overlapStart = eStartObj < workStart ? workStart : eStartObj;
         let overlapEnd = eEndObj > workEnd ? workEnd : eEndObj;
@@ -103,34 +102,28 @@ function bookFocusTime() {
         }
       }
       
-      // Add to valid list for gap analysis
-      validEvents.push({
-        start: eStartObj,
-        end: eEndObj
-      });
+      validEvents.push({ start: eStartObj, end: eEndObj });
     });
 
-    // 5. Calculate Quota
+    // Calculate Quota
     const goalMillis = CONFIG.DAILY_GOAL_HOURS * 60 * 60 * 1000;
     let neededMillis = goalMillis - existingFocusMillis;
+    const existingHours = (existingFocusMillis / (1000 * 60 * 60)).toFixed(1);
 
     if (neededMillis <= 0) {
-      console.log(`[${startStr.slice(0,10)}] Quota full.`);
+      console.log(`${dateLog} Quota full (${existingHours}h existing).`);
       continue;
     }
 
-    // 6. Gap Analysis
+    // Gap Analysis
     let freeSlots = [];
     let lastEndTime = workStart;
     
-    // Sort events by start time
     validEvents.sort((a, b) => a.start - b.start);
 
     for (let e of validEvents) {
       let gapStart = lastEndTime;
       let gapEnd = e.start;
-      
-      // Clamp gap (handle overlaps)
       if (gapEnd < gapStart) gapEnd = gapStart; 
 
       if ((gapEnd - gapStart) >= (CONFIG.MIN_CHUNK_MINUTES * 60 * 1000)) {
@@ -140,15 +133,17 @@ function bookFocusTime() {
       if (e.end > lastEndTime) lastEndTime = e.end;
     }
 
-    // Final gap (End of day)
+    // Final gap
     if ((workEnd - lastEndTime) >= (CONFIG.MIN_CHUNK_MINUTES * 60 * 1000)) {
       freeSlots.push({start: lastEndTime, end: workEnd, duration: workEnd - lastEndTime});
     }
 
-    // Sort slots by duration (Largest First)
     freeSlots.sort((a, b) => b.duration - a.duration);
 
-    // 7. Book Time
+    // LOGGING THE ANALYSIS
+    console.log(`${dateLog} Existing: ${existingHours}h. Need: ${(neededMillis/60000).toFixed(0)}m. Found ${freeSlots.length} slots.`);
+
+    // Book Time
     for (let slot of freeSlots) {
       if (neededMillis <= 0) break;
 
@@ -157,7 +152,6 @@ function bookFocusTime() {
 
       let bookEnd = new Date(slot.start.getTime() + bookDuration);
       
-      // ISO Strings for API
       const startISO = Utilities.formatDate(slot.start, timeZone, "yyyy-MM-dd'T'HH:mm:ss");
       const endISO = Utilities.formatDate(bookEnd, timeZone, "yyyy-MM-dd'T'HH:mm:ss");
 
@@ -176,10 +170,10 @@ function bookFocusTime() {
         };
 
         Calendar.Events.insert(resource, CONFIG.CALENDAR_ID);
-        console.log(`[${startStr.slice(0,10)}] Booked ${bookDuration/60000} mins (${startISO.slice(11,16)} - ${endISO.slice(11,16)})`);
+        console.log(`${dateLog} >> BOOKED: ${startISO.slice(11,16)} - ${endISO.slice(11,16)}`);
         neededMillis -= bookDuration;
       } catch (e) {
-        console.error(`Error booking: ${e.message}`);
+        console.error(`${dateLog} Error booking: ${e.message}`);
       }
     }
   }
